@@ -1,8 +1,3 @@
-# Video Sharing Platform - YouTube Clone
-
-This repository contains a YouTube Clone microservices application built with .NET 7 and Angular 14.
-
-> This project is still in progress and subject to changes and refactoring.
 
 ![Screenshot](Images/Screenshots/1.png)
 
@@ -11,7 +6,6 @@ This repository contains a YouTube Clone microservices application built with .N
 **[Microservices Application (.NET)](#microservices-application-net)**<br>
 **[SPA Application (Angular)](#spa-application-angular)**<br>
 **[Screenshots](#screenshots)**<br>
-**[Demo Video](#demo-video)**<br>
 **[Running with Docker](#running-with-docker)**<br>
 **[Kubernetes](#kubernetes)**<br>
 
@@ -285,37 +279,7 @@ The SPA (Single Page Application) is built using Angular, Angular Material, Ngrx
 
 [MORE SCREENSHOTS](./Screenshots.md)
 
-## Demo Video
-
-[![YouTube Clone Application Demo](http://img.youtube.com/vi/-3ABN57sjqA/0.jpg)](https://www.youtube.com/watch?v=-3ABN57sjqA "YouTube Clone Application Demo")
-
-[YouTube Clone Application Demo Video](https://www.youtube.com/watch?v=-3ABN57sjqA)
-
-## Running with Docker
-
-To run the application and its necessary infrastructure, make sure that you have Docker and Docker Compose installed on your machine.
-
-Navigate to the **Scripts** directory and use the following commands:
-
-##### Windows
-
-```
-backend_build.bat
-backend_up.bat
-
-front_build.bat
-front_up.bat
-```
-
-##### Linux
-
-```
-./backend_build.sh
-./backend_up.sh
-
-./front_build.sh
-./front_up.sh
-```
+---------------------------------------------------------
 
 The scripts will launch 26 containers, including the web client, microservices and infrastructure.
 
@@ -363,92 +327,3 @@ This application use the following ports:
 
     WebClient: 4200
 ```
-
-## Kubernetes
-
-This repository includes sample kubernetes manifests for deploying the application to Minikube and Azure Kubernetes Service (AKS).
-
-### Deploying to Minikube
-
-To deploy the application to Minikube, you will need to have Docker, Kubectl, and Minikube installed on your machine. Here are the steps to get started:
-
-1. Start the **Minikube** by running the following command:
-
-```
-minikube start
-```
-
-2. Build the required Docker images by navigating to the **Deploy/scripts** directory and running the following command:
-
-```
-build_images.bat
-```
-
-3. Navigate to the **Deploy/scripts/minikube** directory and run the following commands using PowerShell:
-
-```
-./0_enable_metrics_server.ps1
-./1_minikube_load_images.ps1
-./2_install_prometheus.ps1
-./3_bake.ps1
-./4_apply.ps1
-./5_minikube_tunnel.ps1
-```
-
-These commands enable the metrics server, load Docker images into Minikube, install Prometheus, bake the Kubernetes manifests with Kustomize, deploy the application, and start a tunnel to the Minikube cluster.
-
-Once the application is fully launched, the services will be exposed by the following ports
-
-```
-    Storage: 14200
-    IdentityProvider: 15100
-    APIGateway: 16000
-```
-
-### Deploying to Azure Kubernetes Service
-
-To deploy the application to Azure Kubernetes Service, you'll need to have the following set up:
-
-- A Kubernetes cluster
-- A container registry
-- A DNS zone
-- A domain name
-
-The DNS zone and domain name are required for domain-name-based routing. The Kubernetes cluster is also integrated with **ingress-nginx**, **external-dns** and **cert-manager** which automatically manage the DNS records and TLS certificates for the services.
-
-#### This repository contains
-
-##### Terraform manifests for deploying infrastructure ( Deploy/terraform/aks )
-
-- Provision the AKS cluster, container registry, DNS zone, virtual network, subnets
-- Install Helm charts including **ingress-nginx**, **external-dns** and **cert-manager** which automatically manage the DNS records and TLS certificates for the services
-- Assign roles such as DNS Zone Contributor to the Kubelet identity
-
-##### Terraform manifests for deploying the Azure DevOps project ( Deploy/terraform/ado )
-
-- Deploy the Azure DevOps project
-- Deploy the variable group
-- Deploy the pipelines for the infrastructure, microservices and web client
-- Deploy the Azure AD service principal with an owner role of the subscription and the corresponding service connection for Azure resource manager
-  - The owner role is required for role assignments to the Kubelet identity
-- Deploy the service connection to the GitHub repository
-- Add the Project Build Service user to the Endpoint Administrators group to ensure that the job access tokens provide permission to manipulate the service connections
-
-##### Terraform manifests for deploying the Azure DevOps service connections ( Deploy/terraform/ado-svc-conn )
-
-- Apply after infrastructure provisioning to create service connections for AKS cluster and container registry automatically
-
-##### Azure pipelines YAML files ( AzurePipelines )
-
-- Configure the pipelines for infrastructure, microservices and web client
-- Bake the Kubernetes manifests and replace placeholders in the manifests with actual values, such as domain name, container registry and tag
-- Continuously build application images and deploy them to the AKS cluster
-
-##### Kubernetes manifests for deploying the application to the AKS cluster ( Deploy/kubernetes )
-
-- Use Kustomize to generate Kubernetes manifests for different environments
-- Deploy all the microservices and the web client to the AKS cluster
-- Deploy the RabbitMQ, PostgreSQL, MongoDB, ElasticSearch, Logstash, Redis, Jaeger (for development purposes)
-- Deploy an ingress for both domain-name-based and path-based routings
-- Deploy a cluster issuer to represent the Let’s Encrypt certificate authority to obtain the signed certificate
-- Deploy the horizontal pod autoscaler, pod monitor for the video processor service to scale it according to the usage automatically
