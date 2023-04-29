@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: identity-provider
+  labels:
+    app: identity-provider
+spec:
+  selector:
+    matchLabels:
+      app: identity-provider
+  template:
+    metadata:
+      labels:
+        app: identity-provider
+    spec:
+      containers:
+      - name: identity-provider
+        image: identity-provider
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        ports:
+        - name: http
+          containerPort: 80
+        readinessProbe:
+          httpGet:
+            path: /hc
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          failureThreshold: 10
+          successThreshold: 1
+        envFrom:
+        - configMapRef:
+            name: common-config
+        - configMapRef:
+            name: identity-provider-config
+        - secretRef:
+            name: identity-provider-secret

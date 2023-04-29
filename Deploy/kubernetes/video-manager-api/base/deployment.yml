@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: video-manager-api
+  labels:
+    app: video-manager-api
+spec:
+  selector:
+    matchLabels:
+      app: video-manager-api
+  template:
+    metadata:
+      labels:
+        app: video-manager-api
+    spec:
+      containers:
+      - name: video-manager-api
+        image: video-manager-api
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        ports:
+        - name: http
+          containerPort: 80
+        readinessProbe:
+          httpGet:
+            path: /hc
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          failureThreshold: 10
+          successThreshold: 1
+        envFrom:
+        - configMapRef:
+            name: common-config
+        - configMapRef:
+            name: video-manager-api-config
+        - secretRef:
+            name: video-manager-api-secret

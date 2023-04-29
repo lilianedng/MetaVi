@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: video-processor-application
+  labels:
+    app: video-processor-application
+spec:
+  selector:
+    matchLabels:
+      app: video-processor-application
+  template:
+    metadata:
+      labels:
+        app: video-processor-application
+    spec:
+      serviceAccountName: video-processor-application-service-account
+      terminationGracePeriodSeconds: 3660
+      containers:
+        - name: video-processor-application
+          image: video-processor-application
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1500m"
+          ports:
+            - name: http
+              containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /hc
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            failureThreshold: 10
+            successThreshold: 1
+          envFrom:
+            - configMapRef:
+                name: common-config
+            - configMapRef:
+                name: video-processor-application-config
+            - secretRef:
+                name: video-processor-application-secret
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace

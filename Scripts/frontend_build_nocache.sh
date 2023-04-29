@@ -1,0 +1,1 @@
+docker build -t web-client-dev -f ../Frontend/WebClient/docker-dev/Dockerfile --no-cache ../Frontend/WebClient

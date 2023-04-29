@@ -1,0 +1,108 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress
+  annotations:
+    cert-manager.io/cluster-issuer: lets-encrypt
+    nginx.ingress.kubernetes.io/proxy-body-size: 1024M
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    
+    nginx.ingress.kubernetes.io/proxy-buffers-number: "4"
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
+
+    nginx.ingress.kubernetes.io/affinity: cookie
+    nginx.ingress.kubernetes.io/affinity-mode: persistent
+    nginx.ingress.kubernetes.io/session-cookie-name: "affinity"
+    nginx.ingress.kubernetes.io/session-cookie-expires: "14400"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "14400"
+
+    # nginx.ingress.kubernetes.io/enable-cors: "true"
+    # nginx.ingress.kubernetes.io/cors-allow-origin: "http://localhost:4200"
+    # nginx.ingress.kubernetes.io/cors-allow-headers: "*"
+    # nginx.ingress.kubernetes.io/cors-allow-methods: "*"
+    # nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    # nginx.ingress.kubernetes.io/configuration-snippet: |
+    #   proxy_set_header Upgrade $http_upgrade;
+    #   proxy_set_header Connection keep-alive;
+    #   proxy_set_header X-Real-IP $remote_addr;
+    #   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    #   proxy_set_header X-Forwarded-Proto $scheme;
+    #   proxy_cache_bypass $http_upgrade;
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - "auth.VAR_DOMAIN_NAME"
+    - "storage.VAR_DOMAIN_NAME"
+    - "www.VAR_DOMAIN_NAME"
+    - "VAR_DOMAIN_NAME"
+    secretName: tls-secret
+  rules:
+  - host: "auth.VAR_DOMAIN_NAME"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: identity-provider
+            port:
+              number: 80
+  - host: "storage.VAR_DOMAIN_NAME"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: storage-api
+            port:
+              number: 80
+  - host: "www.VAR_DOMAIN_NAME"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/api"
+        backend:
+          service:
+            name: api-gateway
+            port:
+              number: 80
+      - pathType: Prefix
+        path: "/hubs"
+        backend:
+          service:
+            name: api-gateway
+            port:
+              number: 80
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: web-client
+            port:
+              number: 80
+  - host: "VAR_DOMAIN_NAME"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/api"
+        backend:
+          service:
+            name: api-gateway
+            port:
+              number: 80
+      - pathType: Prefix
+        path: "/hubs"
+        backend:
+          service:
+            name: api-gateway
+            port:
+              number: 80
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: web-client
+            port:
+              number: 80

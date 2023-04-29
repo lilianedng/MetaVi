@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - "./limit-range.yml"
+  - "./config-maps/common.yml"
+  - "./roles/pod-updater-role.yml"
+  - "./cluster-roles/services-discovery-cluster-role.yml"
+  - "./storage-classes/persistence.yml"

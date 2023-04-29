@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-status-config
+data:
+  HealthChecksUI__KubernetesDiscoveryService__Enabled: "true"
+  HealthChecksUI__KubernetesDiscoveryService__HealthPath: "hc"
+  HealthChecksUI__KubernetesDiscoveryService__RefreshTimeOnSeconds: "30"

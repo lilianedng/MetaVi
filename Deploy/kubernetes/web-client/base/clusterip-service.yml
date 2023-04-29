@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-client
+  labels:
+    app: web-client
+    HealthChecks: "true"
+spec:
+  selector:
+    app: web-client
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: http

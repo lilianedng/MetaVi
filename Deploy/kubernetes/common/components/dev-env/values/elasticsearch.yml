@@ -1,0 +1,23 @@
+image:
+  tag: 8.6.2-debian-11-r10
+  
+global:
+  kibanaEnabled: true
+  storageClass: persistence-sc
+master:
+  masterOnly: false
+  replicaCount: 1
+  resources:
+  requests:
+    cpu: "100m"
+    memory: "512Mi"
+  limits:
+    cpu: "500m"
+    memory: "1Gi"
+data:
+  replicaCount: 0
+coordinating:
+  replicaCount: 0
+ingest:
+  enabled: false
+heapSize: 512m

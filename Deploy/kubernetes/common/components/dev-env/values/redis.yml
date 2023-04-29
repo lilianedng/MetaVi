@@ -1,0 +1,19 @@
+image:
+  tag: 7.0.10-debian-11-r1
+
+global:
+  storageClass: persistence-sc
+architecture: standalone
+auth:
+  password: password
+replica: 
+  replicaCount: 0
+resources:
+  requests:
+    cpu: "100m"
+    memory: "256Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+readinessProbe:
+  initialDelaySeconds: 30

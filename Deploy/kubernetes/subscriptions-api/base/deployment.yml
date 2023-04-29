@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subscriptions-api
+  labels:
+    app: subscriptions-api
+spec:
+  selector:
+    matchLabels:
+      app: subscriptions-api
+  template:
+    metadata:
+      labels:
+        app: subscriptions-api
+    spec:
+      containers:
+      - name: subscriptions-api
+        image: subscriptions-api
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        ports:
+        - name: http
+          containerPort: 80
+        readinessProbe:
+          httpGet:
+            path: /hc
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          failureThreshold: 10
+          successThreshold: 1
+        envFrom:
+        - configMapRef:
+            name: common-config
+        - configMapRef:
+            name: subscriptions-api-config
+        - secretRef:
+            name: subscriptions-api-secret

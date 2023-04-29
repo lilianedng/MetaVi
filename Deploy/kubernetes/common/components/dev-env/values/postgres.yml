@@ -1,0 +1,17 @@
+image:
+  tag: 15.2.0-debian-11-r14
+
+global:
+  storageClass: persistence-sc
+auth:
+  postgresPassword: example
+primary:
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "512Mi"
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+readinessProbe:
+  initialDelaySeconds: 60
